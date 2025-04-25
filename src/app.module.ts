@@ -12,6 +12,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { DoctorAvailabilityModule } from './doctor-availability/doctor-availability.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { join } from 'path';
     ViewLabReportsModule,
     InstituteAdminModule,
     PrismaModule,
+    DoctorAvailabilityModule,
   ],
   controllers: [AppController],
   providers: [AppService],
