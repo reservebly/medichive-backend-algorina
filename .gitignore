@@ -54,3 +54,21 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Prisma
+prisma/dev.db
+prisma/dev.sqlite
+prisma/.DS_Store
+prisma/node_modules/
+prisma/.env
+prisma/.env.local
+prisma/.env.development
+prisma/.env.production
+prisma/.env.test
+prisma/generated/
+
+# Or if generated is outside prisma directory
+generated/
+
+# Or ignore all generated folders anywhere
+**/generated/
