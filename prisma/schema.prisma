@@ -66,6 +66,22 @@ model DoctorAvailability {
   updatedAt   DateTime @updatedAt
 }
 
+model DoctorRating {
+  id         Int       @id @default(autoincrement())
+  doctorId   Int
+  patientId  Int
+  rating     Int       // e.g., 1 to 5
+  comment    String?   // optional text review
+  createdAt  DateTime  @default(now())
+
+  doctor     Doctor    @relation(fields: [doctorId], references: [id])
+  patient    Patient   @relation(fields: [patientId], references: [id])
+
+  @@unique([doctorId, patientId]) // prevent multiple ratings from the same patient
+}
+
+
+
 
 
 
