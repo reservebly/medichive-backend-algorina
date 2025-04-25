@@ -43,3 +43,30 @@ model Doctor {
   licenseNumber String
   phoneNumber   String
 }
+
+enum WeekDay {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+
+model DoctorAvailability {
+  id          Int      @id @default(autoincrement())
+  doctorId    Int
+  doctor      Doctor   @relation(fields: [doctorId], references: [id])
+  dayOfWeek   WeekDay
+  startTime   String   // Use Time if supported, or DateTime if storing full timestamp
+  endTime     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+
+
+
