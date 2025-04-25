@@ -7,9 +7,10 @@ import { MedichiveAdminModule } from './medichive-admin/medichive-admin.module';
 import { InstituteModule } from './institute/institute.module';
 import { ViewLabReportsModule } from './view-lab-reports/view-lab-reports.module';
 import { PatientModule } from './patient/patient.module';
+import { InstituteAdminModule } from './institute-admin/institute-admin.module';
 
 @Module({
-  imports: [AppointmentModule, DoctorModule, MedichiveAdminModule, InstituteModule, ViewLabReportsModule, PatientModule],
+  imports: [AppointmentModule, DoctorModule, MedichiveAdminModule, InstituteModule, ViewLabReportsModule, PatientModule,InstituteAdminModule],
   controllers: [AppController],
   providers: [AppService],
 })
