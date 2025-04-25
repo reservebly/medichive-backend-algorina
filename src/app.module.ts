@@ -13,6 +13,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { DoctorAvailabilityModule } from './doctor-availability/doctor-availability.module';
+import { DoctorRateModule } from './doctor-rate/doctor-rate.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { DoctorAvailabilityModule } from './doctor-availability/doctor-availabil
     InstituteAdminModule,
     PrismaModule,
     DoctorAvailabilityModule,
+    DoctorRateModule,
   ],
   controllers: [AppController],
   providers: [AppService],
