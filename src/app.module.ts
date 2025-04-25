@@ -8,9 +8,25 @@ import { InstituteModule } from './institute/institute.module';
 import { ViewLabReportsModule } from './view-lab-reports/view-lab-reports.module';
 import { PatientModule } from './patient/patient.module';
 import { InstituteAdminModule } from './institute-admin/institute-admin.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { ConfigModule } from '@nestjs/config';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
-  imports: [AppointmentModule, DoctorModule, MedichiveAdminModule, InstituteModule, ViewLabReportsModule, PatientModule,InstituteAdminModule],
+  imports: [
+    ConfigModule.forRoot(),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
+    AppointmentModule,
+    DoctorModule,
+    MedichiveAdminModule,
+    InstituteModule,
+    ViewLabReportsModule,
+    InstituteAdminModule,
+    PrismaModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

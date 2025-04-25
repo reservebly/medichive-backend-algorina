@@ -20,20 +20,26 @@ enum UserRole {
   LAB_ADMIN
   DOCTOR
   PATIENT
-  
 }
 
-model User{
-  id         Int       @id @default(autoincrement())
-  username   String
-  password   String
-  name       String
-  email      String    @unique
-  address    String
-  nic        String
-  contactNo  String
-  roles      UserRole
-
-
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String
+  password  String
+  name      String
+  email     String   @unique
+  address   String
+  nic       String
+  contactNo String
+  roles     UserRole
 }
 
+model Doctor {
+  doctorId      String @id @default(uuid())
+  email         String @unique
+  name          String
+  age           Float
+  experience    Float
+  licenseNumber String
+  phoneNumber   String
+}
