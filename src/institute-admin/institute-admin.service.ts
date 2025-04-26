@@ -16,16 +16,20 @@ export class InstituteAdminService {
       const isExist = await this.prisma.doctor.findUnique({
         where: { email: email },
       });
-
+  
       if (isExist) {
-        throw new HttpException('bad request', HttpStatus.BAD_REQUEST);
+        throw new HttpException('Doctor with this email already exists', HttpStatus.BAD_REQUEST);
       }
-      await this.prisma.doctor.create({
+  
+      const createdDoctor = await this.prisma.doctor.create({
         data: doctorData,
       });
+  
+      return { message: 'Doctor created successfully', doctor: createdDoctor };
+  
     } catch (err) {
       console.log(err);
-      this.handleErrors(err, 'Error creating doctors');
+      this.handleErrors(err, 'Error creating doctor');
     }
   }
 

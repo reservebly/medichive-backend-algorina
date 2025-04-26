@@ -14,6 +14,18 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { DoctorAvailabilityModule } from './doctor-availability/doctor-availability.module';
 import { DoctorRateModule } from './doctor-rate/doctor-rate.module';
+import { UserModule } from './user/user.module';
+import { DoctorSpecializationModule } from './doctor-specialization/doctor-specialization.module';
+import { LabAdminModule } from './lab-admin/lab-admin.module';
+import { LabModule } from './lab/lab.module';
+import { DiagnosisModule } from './diagnosis/diagnosis.module';
+import { DrugModule } from './drug/drug.module';
+import { LabReportModule } from './lab-report/lab-report.module';
+import { SymptomModule } from './symptom/symptom.module';
+import { RateModule } from './rate/rate.module';
+import { ComplaintModule } from './complaint/complaint.module';
+
+
 
 @Module({
   imports: [
@@ -30,6 +42,16 @@ import { DoctorRateModule } from './doctor-rate/doctor-rate.module';
     PrismaModule,
     DoctorAvailabilityModule,
     DoctorRateModule,
+    UserModule,
+    DoctorSpecializationModule,
+    LabAdminModule,
+    LabModule,
+    DiagnosisModule,
+    DrugModule,
+    LabReportModule,
+    SymptomModule,
+    RateModule,
+    ComplaintModule,
   ],
   controllers: [AppController],
   providers: [AppService],
