@@ -13,29 +13,23 @@ export class InstituteAdminService {
       const isExist = await this.prisma.doctor.findUnique({
         where: { email: email },
       });
-
+  
       if (isExist) {
-        throw new HttpException('bad request', HttpStatus.BAD_REQUEST);
+        throw new HttpException('Doctor with this email already exists', HttpStatus.BAD_REQUEST);
       }
-      await this.prisma.doctor.create({
+  
+      const createdDoctor = await this.prisma.doctor.create({
         data: doctorData,
       });
+  
+      return { message: 'Doctor created successfully', doctor: createdDoctor };
+  
     } catch (err) {
       console.log(err);
-      this.handleErrors(err, 'Error creating doctors');
+      this.handleErrors(err, 'Error creating doctor');
     }
   }
-
-  handleErrors(error: unknown, message?: string) {
-    let errorMessage = 'Unknown error';
-
-    if (error instanceof Error) {
-      errorMessage = error.message;
-    } else if (typeof error === 'string') {
-      errorMessage = error;
-    }
-
-    this.logger.error(`${message ?? 'Error'} : ${errorMessage}`);
-    throw new HttpException(errorMessage, 500);
+  handleErrors(err: any, arg1: string) {
+    throw new Error('Method not implemented.');
   }
 }
