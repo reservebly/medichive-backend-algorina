@@ -29,142 +29,134 @@ enum Gender {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String
+  id        String    @id @default(uuid())
+  username  String    @unique
   password  String
   name      String
-  email     String   @unique
-  address   String
-  nic       String
+  email     String    @unique
+  address   String?
+  nic       String?
   contactNo String
   gender    Gender
-  dob       DateTime
+  dob       DateTime?
   roles     UserRole
 
-  doctor    Doctor?
+  doctor         Doctor?
   instituteAdmin InstituteAdmin?
-  patient Patient?
+  patient        Patient?
   medichiveAdmin MedichiveAdmin?
-  labAdmin LabAdmin?
+  labAdmin       LabAdmin?
 }
 
 model Doctor {
-  id      String @id @default(uuid())
+  id            String              @id @default(uuid())
   experience    Float
   licenseNumber String
-  userId         Int    @unique
-  user           User   @relation(fields: [userId], references: [id])
-  availability   DoctorAvailability?
+  userId        String              @unique
+  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  availability  DoctorAvailability?
+  DoctorRating  DoctorRating[]
 }
-
-
 
 model DoctorAvailability {
-  id          Int      @id @default(autoincrement())
+  id       Int    @id @default(autoincrement())
   doctorId String @unique
-  doctor    Doctor @relation(fields: [doctorId], references: [id])
+  doctor   Doctor @relation(fields: [doctorId], references: [id])
 }
 
-model DoctorSpecialization{
-  id          Int      @id @default(autoincrement())
-  name String
+model DoctorSpecialization {
+  id          Int    @id @default(autoincrement())
+  name        String
   description String
 }
 
-model InstituteAdmin{
-  id          Int      @id @default(autoincrement())
-  userId         Int    @unique
-  user           User   @relation(fields: [userId], references: [id])
+model InstituteAdmin {
+  id     Int    @id @default(autoincrement())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
 }
 
-model Patient{
-  id          Int      @id @default(autoincrement())
-  userId         Int    @unique
-  user           User   @relation(fields: [userId], references: [id])
+model Patient {
+  id     Int    @id @default(autoincrement())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  DoctorRating DoctorRating[]
 }
 
-model MedichiveAdmin{
-  id          Int      @id @default(autoincrement())
-  userId         Int    @unique
-  user           User   @relation(fields: [userId], references: [id])
+model MedichiveAdmin {
+  id     Int    @id @default(autoincrement())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
 }
 
-model LabAdmin{
-  id          Int      @id @default(autoincrement())
-  userId         Int    @unique
-  user           User   @relation(fields: [userId], references: [id])
+model LabAdmin {
+  id     Int    @id @default(autoincrement())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
 }
 
-model Institute{
-  id          Int      @id @default(autoincrement())
-  name String
+model Institute {
+  id                 Int    @id @default(autoincrement())
+  name               String
   registrationNumber String
-  contactNumber String
-  website String
-  address String
-  description String
-  certificate String
+  contactNumber      String
+  website            String
+  address            String
+  description        String
+  certificate        String
 }
 
-model Lab{
-  id          Int      @id @default(autoincrement())
-  name String
+model Lab {
+  id                 Int    @id @default(autoincrement())
+  name               String
   registrationNumber String
-  contactNumber String
-  website String
-  address String
-  description String
-  certificate String
+  contactNumber      String
+  website            String
+  address            String
+  description        String
+  certificate        String
 }
 
-model Appointment{
-  id          Int      @id @default(autoincrement())
-  description String
-}
-
-model Diagnosis{
-  id          Int      @id @default(autoincrement())
-  name String
+model Appointment {
+  id          Int    @id @default(autoincrement())
   description String
 }
 
-model drug{
-  id          Int      @id @default(autoincrement())
-  name String
-  code String
+model Diagnosis {
+  id          Int    @id @default(autoincrement())
+  name        String
   description String
 }
 
-model LabReport{
-  id          Int      @id @default(autoincrement())
+model drug {
+  id          Int    @id @default(autoincrement())
+  name        String
+  code        String
   description String
-  name String
 }
 
-model Rate{
-  id          Int      @id @default(autoincrement())
+model LabReport {
+  id          Int    @id @default(autoincrement())
+  description String
+  name        String
 }
 
-model Complaint{
-  id          Int      @id @default(autoincrement())
+model Rate {
+  id Int @id @default(autoincrement())
+}
+
+model Complaint {
+  id Int @id @default(autoincrement())
 }
 
 model DoctorRating {
-  id         Int       @id @default(autoincrement())
-  doctorId   Int
-  patientId  Int
-  rating     Int       // e.g., 1 to 5
-  comment    String?   // optional text review
-  createdAt  DateTime  @default(now())
-
-  doctor     Doctor    @relation(fields: [doctorId], references: [id])
-  patient    Patient   @relation(fields: [patientId], references: [id])
-
-  @@unique([doctorId, patientId]) // prevent multiple ratings from the same patient
+  id        Int      @id @default(autoincrement())
+  doctorId  String
+  patientId Int
+  rating    Int // e.g., 1 to 5
+  comment   String? // optional text review
+  createdAt DateTime @default(now())
+  doctor    Doctor   @relation(fields: [doctorId], references: [id])
+  patient   Patient  @relation(fields: [patientId], references: [id])
 }
-
-
-
-
-
-
