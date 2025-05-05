@@ -12,7 +12,7 @@ import {
   MinLength,
 } from 'class-validator';
 import { Gender } from 'generated/prisma';
-import { Type } from 'class-transformer';  // Importing Type from class-transformer
+import { Type } from 'class-transformer';  
 
 export class AddDoctorDto {
   @IsString()
@@ -21,7 +21,7 @@ export class AddDoctorDto {
 
   @IsOptional()
   @IsDate()
-  @Type(() => Date)  // Telling NestJS to treat it as a Date instance
+  @Type(() => Date)  
   dob?: Date;
 
   @IsNumber()
@@ -49,9 +49,11 @@ export class AddDoctorDto {
   @IsNotEmpty()
   @MinLength(8, { message: 'Password must be at least 8 characters' })
   @MaxLength(16, { message: 'Password must not exceed 16 characters' })
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])/, {
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/, {
     message:
       'Password must include at least one uppercase letter, one lowercase letter, one number, and one special character',
   })
+  @MaxLength(16, { message: 'Password must not exceed 16 characters' })
   password: string;
+  
 }

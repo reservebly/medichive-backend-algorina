@@ -22,4 +22,5 @@ export class InstituteAdminController {
   ) {
     return await this.instituteAdminService.deleteDoctor(data);
   }
+  
 }
