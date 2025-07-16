@@ -41,8 +41,8 @@ model User {
   dob       DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now()) @updatedAt
+  refreshToken String?
   roles     UserRole
-
   doctor         Doctor?
   instituteAdmin InstituteAdmin?
   patient        Patient?
@@ -75,9 +75,11 @@ model DoctorSpecialization {
 }
 
 model InstituteAdmin {
-  id     Int    @id @default(autoincrement())
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
+  id          Int       @id @default(autoincrement())
+  userId      String    @unique
+  instituteId Int       @unique
+  user        User      @relation(fields: [userId], references: [id])
+  institute   Institute @relation(fields: [instituteId], references: [id])
 }
 
 model Patient {
@@ -101,7 +103,7 @@ model LabAdmin {
 }
 
 model Institute {
-  id                 Int    @id @default(autoincrement())
+  id                 Int             @id @default(autoincrement())
   name               String
   registrationNumber String
   contactNumber      String
@@ -109,6 +111,8 @@ model Institute {
   address            String
   description        String
   certificate        String
+  userId             String?          @unique
+  instituteAdmin     InstituteAdmin?
 }
 
 model Lab {
