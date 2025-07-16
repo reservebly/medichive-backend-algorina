@@ -24,15 +24,14 @@ import { LabReportModule } from './lab-report/lab-report.module';
 import { SymptomModule } from './symptom/symptom.module';
 import { RateModule } from './rate/rate.module';
 import { ComplaintModule } from './complaint/complaint.module';
-
-
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
-    }),
+    }),
     AppointmentModule,
     DoctorModule,
     MedichiveAdminModule,
@@ -52,6 +51,7 @@ import { ComplaintModule } from './complaint/complaint.module';
     SymptomModule,
     RateModule,
     ComplaintModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

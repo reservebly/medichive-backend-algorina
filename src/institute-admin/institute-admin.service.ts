@@ -4,6 +4,7 @@ import { AddDoctorDto } from './dto/add-doctor.dto';
 import { DeleteDoctorDto } from './dto/delete-doctor.dto';
 import { UserRole } from 'generated/prisma';
 import * as bcrypt from 'bcrypt';
+import { AddInstituteAdminDto } from './dto/add-institute-admin.dto';
 
 @Injectable()
 export class InstituteAdminService {
@@ -115,6 +116,62 @@ export class InstituteAdminService {
     }
   }
 
+  async addInstituteAdmin(data: AddInstituteAdminDto) {
+    try {
+      // Destructure required fields from the received data
+      const { email, name, contactNo, password, gender } = data;
+
+      const isExist = await this.prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (isExist) {
+        throw new HttpException(
+          'Institute admin with this email already exists',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      const hash = await bcrypt.hash(password, 12);
+
+      const institute = await this.prisma.institute.create({
+        data: {
+          name: 'ABC Institute',
+          registrationNumber: 'REG123',
+          contactNumber: '0112345678',
+          website: 'https://abc.com',
+          address: 'Colombo',
+          description: 'Best institute',
+          certificate: 'cert.pdf',
+        },
+      });
+
+      const user = await this.prisma.user.create({
+        data: {
+          email,
+          name,
+          contactNo,
+          gender,
+          roles: UserRole.INSTITUTE_ADMIN,
+          username: email,
+          password: hash,
+          instituteAdmin: {
+            create: {
+              instituteId: institute.id,
+            },
+          },
+        },
+      });
+
+      // Return a success message if creation is successful
+      return { message: 'Doctor created successfully' };
+    } catch (err) {
+      // Log error and handle gracefully
+      console.log(err);
+      this.handleErrors(err, 'Error creating doctor');
+    }
+  }
+
   /**
    * //Handle and log service-level errors
    * @param error - The caught error (any type)
@@ -138,4 +195,3 @@ export class InstituteAdminService {
     throw new HttpException(errorMessage, 500);
   }
 }
-
