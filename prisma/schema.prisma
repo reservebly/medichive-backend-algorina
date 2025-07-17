@@ -29,20 +29,20 @@ enum Gender {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  username  String    @unique
-  password  String
-  name      String
-  email     String    @unique
-  address   String?
-  nic       String?
-  contactNo String
-  gender    Gender
-  dob       DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @default(now()) @updatedAt
-  refreshToken String?
-  roles     UserRole
+  id             String          @id @default(uuid())
+  username       String          @unique
+  password       String
+  name           String
+  email          String          @unique
+  address        String?
+  nic            String?
+  contactNo      String
+  gender         Gender
+  dob            DateTime?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @default(now()) @updatedAt
+  refreshToken   String?
+  roles          UserRole
   doctor         Doctor?
   instituteAdmin InstituteAdmin?
   patient        Patient?
@@ -60,6 +60,14 @@ model Doctor {
   user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   availability  DoctorAvailability?
   DoctorRating  DoctorRating[]
+
+  Symptom Symptom[]
+
+  Diagnosis Diagnosis[]
+  LabReport LabReport?  @relation(fields: [labReportId], references: [id])
+
+  Prescription Prescription[]
+  labReportId  Int?
 }
 
 model DoctorAvailability {
@@ -83,11 +91,15 @@ model InstituteAdmin {
 }
 
 model Patient {
-  id     Int    @id @default(autoincrement())
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
-
+  id           String         @id @default(uuid())
+  userId       String         @unique
+  user         User           @relation(fields: [userId], references: [id])
   DoctorRating DoctorRating[]
+  Diagnosis    Diagnosis[]
+  Symptom      Symptom[]
+  LabReport    LabReport[]
+
+  Prescription Prescription[]
 }
 
 model MedichiveAdmin {
@@ -111,7 +123,7 @@ model Institute {
   address            String
   description        String
   certificate        String
-  userId             String?          @unique
+  userId             String?         @unique
   instituteAdmin     InstituteAdmin?
 }
 
@@ -132,9 +144,27 @@ model Appointment {
 }
 
 model Diagnosis {
-  id          Int    @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
   description String
+  patientId   String   
+  doctorId    String  
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  doctor      Doctor   @relation(fields: [doctorId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+}
+
+model Symptom {
+  id          Int      @id @default(autoincrement())
+  symptoms    String
+  description String
+  patientId   String   
+  doctorId    String   
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  doctor      Doctor   @relation(fields: [doctorId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
 }
 
 model drug {
@@ -145,9 +175,27 @@ model drug {
 }
 
 model LabReport {
-  id          Int    @id @default(autoincrement())
-  description String
-  name        String
+  id          Int      @id @default(autoincrement())
+  imageUrl    String?
+  description String?
+  category    String
+  patientId   String 
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  Doctor      Doctor[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+}
+
+model Prescription {
+  id        Int      @id @default(autoincrement())
+  imageUrl  String?
+  notes     String?
+  patientId String 
+  doctorId  String
+  patient   Patient  @relation(fields: [patientId], references: [id])
+  doctor    Doctor   @relation(fields: [doctorId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Rate {
@@ -161,7 +209,7 @@ model Complaint {
 model DoctorRating {
   id        Int      @id @default(autoincrement())
   doctorId  String
-  patientId Int
+  patientId String
   rating    Int // e.g., 1 to 5
   comment   String? // optional text review
   createdAt DateTime @default(now())
