@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AddDoctorDto } from './dto/add-doctor.dto';
 import { DeleteDoctorDto } from './dto/delete-doctor.dto';
-import { UserRole } from 'generated/prisma';
+import { Gender, UserRole } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { AddInstituteAdminDto } from './dto/add-institute-admin.dto';
 

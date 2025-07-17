@@ -11,8 +11,8 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { Gender } from 'generated/prisma';
 import { Type } from 'class-transformer';  
+import { Gender } from '@prisma/client';
 
 export class AddDoctorDto {
   @IsString()

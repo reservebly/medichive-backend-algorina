@@ -38,7 +38,7 @@ export class AuthService {
     const payload = { sub: user.id, username: user.username, role: user.roles };
     const accessToken = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_SECRET'),
-      expiresIn: '1m',
+      expiresIn: '15m',
     });
     const refreshToken = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_SECRET'),
