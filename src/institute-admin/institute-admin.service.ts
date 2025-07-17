@@ -5,6 +5,7 @@ import { DeleteDoctorDto } from './dto/delete-doctor.dto';
 import { Gender, UserRole } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { AddInstituteAdminDto } from './dto/add-institute-admin.dto';
+import { AddPatientDto } from './dto/add-patient.dto';
 
 @Injectable()
 export class InstituteAdminService {
@@ -116,6 +117,26 @@ export class InstituteAdminService {
     }
   }
 
+  async getDoctors() {
+    try {
+      // Fetch all users with role DOCTOR and include their doctor-specific details
+      const doctors = await this.prisma.user.findMany({
+        where: {
+          roles: UserRole.DOCTOR,
+        },
+        include: {
+          doctor: true, // Include associated doctor details
+        },
+      });
+
+      // Return the list of doctors
+      return doctors;
+    } catch (err) {
+      console.log(err);
+      this.handleErrors(err, 'Error fetching doctors');
+    }
+  }
+
   async addInstituteAdmin(data: AddInstituteAdminDto) {
     try {
       // Destructure required fields from the received data
@@ -169,6 +190,46 @@ export class InstituteAdminService {
       // Log error and handle gracefully
       console.log(err);
       this.handleErrors(err, 'Error creating doctor');
+    }
+  }
+
+  async addPatient(data: AddPatientDto) {
+    try {
+      const { email, name, contactNo, password, gender, address } = data;
+
+      const isExist = await this.prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (isExist) {
+        throw new HttpException(
+          'Patient with this email already exists',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      const hash = await bcrypt.hash(password, 12);
+
+      const user = await this.prisma.user.create({
+        data: {
+          email,
+          name,
+          contactNo,
+          address,
+          gender,
+          roles: UserRole.PATIENT,
+          username: email,
+          password: hash,
+          patient: {
+            create: {},
+          },
+        },
+      });
+
+      return { message: 'Patient created successfully' };
+    } catch (err) {
+      console.log(err);
+      this.handleErrors(err, 'Error creating patient');
     }
   }
 
