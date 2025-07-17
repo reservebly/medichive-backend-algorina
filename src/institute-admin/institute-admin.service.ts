@@ -6,6 +6,8 @@ import { Gender, UserRole } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { AddInstituteAdminDto } from './dto/add-institute-admin.dto';
 import { AddPatientDto } from './dto/add-patient.dto';
+import { AddSymptomDto } from './dto/add-symptom.dto';
+import { AddDiagnosisDto } from './dto/add-diagnosis.dto';
 
 @Injectable()
 export class InstituteAdminService {
@@ -230,6 +232,113 @@ export class InstituteAdminService {
     } catch (err) {
       console.log(err);
       this.handleErrors(err, 'Error creating patient');
+    }
+  }
+
+  async addSymptom(data: AddSymptomDto) {
+    try {
+      const { symptoms, description, patientId, doctorId } = data;
+
+      // Check if the patient exists
+      const patient = await this.prisma.patient.findUnique({
+        where: { id: patientId },
+      });
+
+      if (!patient) {
+        throw new HttpException('Patient not found', HttpStatus.NOT_FOUND);
+      }
+
+      // Check if the doctor exists
+      const doctor = await this.prisma.doctor.findUnique({
+        where: { userId: doctorId },
+      });
+
+      if (!doctor) {
+        throw new HttpException('Doctor not found', HttpStatus.NOT_FOUND);
+      }
+
+      // Create the symptom entry
+      const symptom = await this.prisma.symptom.create({
+        data: {
+          symptoms,
+          description,
+          patientId,
+          doctorId: doctor.id,
+        },
+      });
+
+      return { message: 'Symptoms recorded successfully', data: symptom };
+    } catch (err) {
+      console.error(err);
+      this.handleErrors(err, 'Error adding symptom');
+    }
+  }
+
+  async addDiagnosis(data: AddDiagnosisDto) {
+  try {
+    const { diagnosis, description, patientId, doctorId } = data;
+
+    // Check if patient exists
+    const patient = await this.prisma.patient.findUnique({
+      where: { id: patientId },
+    });
+
+    if (!patient) {
+      throw new HttpException('Patient not found', HttpStatus.NOT_FOUND);
+    }
+
+    // Check if doctor exists
+    const doctor = await this.prisma.doctor.findUnique({
+      where: { userId: doctorId },
+    });
+
+    if (!doctor) {
+      throw new HttpException('Doctor not found', HttpStatus.NOT_FOUND);
+    }
+
+    // Create diagnosis entry
+    const createdDiagnosis = await this.prisma.diagnosis.create({
+      data: {
+        name:diagnosis,
+        description,
+        patientId,
+        doctorId: doctor.id,
+      },
+    });
+
+    return {
+      message: 'Diagnosis added successfully',
+      data: createdDiagnosis,
+    };
+  } catch (err) {
+    console.error(err);
+    this.handleErrors(err, 'Error adding diagnosis');
+  }
+}
+
+  async getPatients() {
+    try {
+      const patients = await this.prisma.patient.findMany({
+        select: {
+          id: true, // patientId
+          user: {
+            select: {
+              name: true, // patient's name from User model
+            },
+          },
+        },
+      });
+
+      // Format the result to flatten the structure
+      const formattedPatients = patients.map((patient) => ({
+        patientId: patient.id,
+        name: patient.user.name,
+      }));
+
+      return formattedPatients;
+    } catch (err) {
+      console.error(err);
+      this.handleErrors(err, 'Error fetching patients');
     }
   }
 

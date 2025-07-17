@@ -14,6 +14,8 @@ import { AddInstituteAdminDto } from './dto/add-institute-admin.dto';
 import { AuthRoleGuard } from 'src/auth/guards/auth-role.guard';
 import { Roles } from 'src/auth/decorators/roles.decarator';
 import { AddPatientDto } from './dto/add-patient.dto';
+import { AddSymptomDto } from './dto/add-symptom.dto';
+import { AddDiagnosisDto } from './dto/add-diagnosis.dto';
 
 @Controller('institute-admin')
 @UseGuards(AuthRoleGuard)
@@ -39,6 +41,27 @@ export class InstituteAdminController {
   @HttpCode(200)
   async getDoctors() {
     return await this.instituteAdminService.getDoctors();
+  }
+
+  @Post('add-symptoms')
+  @Roles()
+  @HttpCode(200)
+  async addSymptoms(@Body() data: AddSymptomDto) {
+    return await this.instituteAdminService.addSymptom(data);
+  }
+
+    @Post('add-diagnosis')
+  @Roles()
+  @HttpCode(200)
+  async addDiagnosis(@Body() data: AddDiagnosisDto) {
+    return await this.instituteAdminService.addDiagnosis(data);
+  }
+
+    @Get('get-patients')
+  @Roles('INSTITUTE_ADMIN')
+  @HttpCode(200)
+  async getPatients() {
+    return await this.instituteAdminService.getPatients();
   }
 
   @Post('add-institute-admin')
