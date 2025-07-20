@@ -8,6 +8,8 @@ import { AddInstituteAdminDto } from './dto/add-institute-admin.dto';
 import { AddPatientDto } from './dto/add-patient.dto';
 import { AddSymptomDto } from './dto/add-symptom.dto';
 import { AddDiagnosisDto } from './dto/add-diagnosis.dto';
+import { CreateLabReportDto } from './dto/add-lab-reports.dto';
+import { BlackblazeService } from 'src/blackbaze/blackbaze.service';
 
 @Injectable()
 export class InstituteAdminService {
@@ -15,7 +17,10 @@ export class InstituteAdminService {
   private logger: Logger = new Logger(InstituteAdminService.name);
 
   // Inject Prisma service for database operations
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private blackbazeService: BlackblazeService,
+  ) {}
 
   /**
    * //Add a new doctor to the system
@@ -275,10 +280,49 @@ export class InstituteAdminService {
   }
 
   async addDiagnosis(data: AddDiagnosisDto) {
-  try {
-    const { diagnosis, description, patientId, doctorId } = data;
+    try {
+      const { diagnosis, description, patientId, doctorId } = data;
 
-    // Check if patient exists
+      // Check if patient exists
+      const patient = await this.prisma.patient.findUnique({
+        where: { id: patientId },
+      });
+
+      if (!patient) {
+        throw new HttpException('Patient not found', HttpStatus.NOT_FOUND);
+      }
+
+      // Check if doctor exists
+      const doctor = await this.prisma.doctor.findUnique({
+        where: { userId: doctorId },
+      });
+
+      if (!doctor) {
+        throw new HttpException('Doctor not found', HttpStatus.NOT_FOUND);
+      }
+
+      // Create diagnosis entry
+      const createdDiagnosis = await this.prisma.diagnosis.create({
+        data: {
+          name: diagnosis,
+          description,
+          patientId,
+          doctorId: doctor.id,
+        },
+      });
+
+      return {
+        message: 'Diagnosis added successfully',
+        data: createdDiagnosis,
+      };
+    } catch (err) {
+      console.error(err);
+      this.handleErrors(err, 'Error adding diagnosis');
+    }
+  }
+
+  async addLabReport(data: CreateLabReportDto, file) {
+    const { patientId, description, category } = data;
     const patient = await this.prisma.patient.findUnique({
       where: { id: patientId },
     });
@@ -286,35 +330,26 @@ export class InstituteAdminService {
     if (!patient) {
       throw new HttpException('Patient not found', HttpStatus.NOT_FOUND);
     }
-
-    // Check if doctor exists
-    const doctor = await this.prisma.doctor.findUnique({
-      where: { userId: doctorId },
-    });
-
-    if (!doctor) {
-      throw new HttpException('Doctor not found', HttpStatus.NOT_FOUND);
-    }
-
-    // Create diagnosis entry
-    const createdDiagnosis = await this.prisma.diagnosis.create({
+    const imageUrl = await this.blackbazeService.uploadImage(file);
+    const createdReport = await this.prisma.labReport.create({
       data: {
-        name:diagnosis,
-        description,
         patientId,
-        doctorId: doctor.id,
+        description,
+        category,
+        imageUrl,
       },
     });
 
     return {
-      message: 'Diagnosis added successfully',
-      data: createdDiagnosis,
+      message: 'Lab report added successfully',
+      data: createdReport,
     };
-  } catch (err) {
-    console.error(err);
-    this.handleErrors(err, 'Error adding diagnosis');
   }
-}
+
+  async getSignedUrl(fileName: string) {
+    const url = await this.blackbazeService.getSignedUrl(fileName);
+    return { url };
+  }
 
   async getPatients() {
     try {
