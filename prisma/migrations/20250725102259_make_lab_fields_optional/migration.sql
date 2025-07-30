@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "labs" ALTER COLUMN "contact_number" DROP NOT NULL,
+ALTER COLUMN "website" DROP NOT NULL,
+ALTER COLUMN "address" DROP NOT NULL,
+ALTER COLUMN "description" DROP NOT NULL,
+ALTER COLUMN "certificate" DROP NOT NULL;

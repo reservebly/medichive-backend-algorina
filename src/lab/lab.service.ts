@@ -62,7 +62,7 @@ export class LabService {
     // First verify the user is a Lab Admin
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, roles: true, name: true, email: true },
+      select: { id: true, roles: true, name: true, email: true, contactNo: true, address: true },
     });
 
     if (!user) {
@@ -73,37 +73,71 @@ export class LabService {
       throw new Error('User is not a Lab Admin');
     }
 
-    // Try to find a lab associated with this user
+    // Try to find an existing lab for this user
+    const existingLab = await this.prisma.lab.findUnique({
+      where: { userId: userId },
+    });
+
+    if (existingLab) {
+      // Return the existing lab data
+      return {
+        id: existingLab.id,
+        name: existingLab.name,
+        registrationNumber: existingLab.registrationNumber,
+        contactNumber: existingLab.contactNumber,
+        website: existingLab.website,
+        address: existingLab.address,
+        description: existingLab.description,
+        certificate: existingLab.certificate,
+        userId: existingLab.userId,
+      };
+    }
+
+    // If no lab exists, create one with proper data
+    const newLab = await this.prisma.lab.create({
+      data: {
+        name: `${user.name}'s Lab`,
+        registrationNumber: 'REG-' + user.id.slice(0, 8),
+        contactNumber: user.contactNo,
+        website: `https://${user.name.toLowerCase().replace(/\s+/g, '-')}-lab.com`,
+        address: user.address,
+        description: `Lab profile for ${user.name}`,
+        certificate: `CERT-LAB-2024-${Date.now().toString().slice(-3)}`,
+        userId: user.id,
+      },
+    });
+
+    // Also create/update the LabAdmin record
     const labAdmin = await this.prisma.labAdmin.findUnique({
       where: { userId: userId },
     });
 
-    if (!labAdmin) {
-      // If no lab admin record exists, create a basic response
-      return {
-        id: user.id,
-        name: `${user.name}'s Lab`,
-        registrationNumber: 'REG-' + user.id.slice(0, 8),
-        contactNumber: null,
-        website: null,
-        address: null,
-        description: `Lab profile for ${user.name}`,
-        certificate: null,
-        userId: user.id,
-      };
+    if (labAdmin) {
+      // Update existing LabAdmin to link to the new lab
+      await this.prisma.labAdmin.update({
+        where: { userId: userId },
+        data: { labId: newLab.id },
+      });
+    } else {
+      // Create new LabAdmin record
+      await this.prisma.labAdmin.create({
+        data: {
+          userId: userId,
+          labId: newLab.id,
+        },
+      });
     }
 
-    // Return lab profile with labAdmin data
     return {
-      id: labAdmin.id,
-      name: `${user.name}'s Lab`,
-      registrationNumber: 'REG-' + labAdmin.id.toString(),
-      contactNumber: null,
-      website: null,
-      address: null,
-      description: `Lab profile for ${user.name}`,
-      certificate: null,
-      userId: user.id,
+      id: newLab.id,
+      name: newLab.name,
+      registrationNumber: newLab.registrationNumber,
+      contactNumber: newLab.contactNumber,
+      website: newLab.website,
+      address: newLab.address,
+      description: newLab.description,
+      certificate: newLab.certificate,
+      userId: newLab.userId,
     };
   }
 

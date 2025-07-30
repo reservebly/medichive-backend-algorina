@@ -115,11 +115,11 @@ model Lab {
   id                 Int         @id @default(autoincrement())
   name               String
   registrationNumber String      @map("registration_number")
-  contactNumber      String      @map("contact_number")
-  website            String
-  address            String
-  description        String
-  certificate        String
+  contactNumber      String?     @map("contact_number")
+  website            String?
+  address            String?
+  description        String?
+  certificate        String?
   userId             String      @unique @map("user_id")
   user               User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   labAdmins          LabAdmin[]

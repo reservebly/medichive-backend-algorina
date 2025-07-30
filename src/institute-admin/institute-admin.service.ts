@@ -135,13 +135,13 @@ export class InstituteAdminService {
 
       const institute = await this.prisma.institute.create({
         data: {
-          name: 'ABC Institute',
-          registrationNumber: 'REG123',
-          contactNumber: '0112345678',
-          website: 'https://abc.com',
-          address: 'Colombo',
-          description: 'Best institute',
-          certificate: 'cert.pdf',
+          name: `${email.split('@')[0]} Institute`,
+          registrationNumber: `REG-${Date.now().toString().slice(-6)}`,
+          contactNumber: '0000000000',
+          website: '',
+          address: '',
+          description: '',
+          certificate: '',
         },
       });
 

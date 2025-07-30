@@ -44,14 +44,14 @@ describe('InstituteAdminService', () => {
 
   describe('addDoctors', () => {
     const dto: AddDoctorDto = {
-      name: 'Dr. Smith',
+      name: 'Dr. Test',
       dob: new Date('1985-01-01'),
       experience: 10,
-      licenseNumber: 'DOC98765',
-      email: 'drsmith@example.com',
-      phoneNumber: '0712345678',
+      licenseNumber: 'DOC00000',
+      email: 'test@example.com',
+      phoneNumber: '0000000000',
       gender: Gender.MALE,
-      password: 'P@ssword123',
+      password: 'testpassword',
     };
 
     it('should create a doctor successfully if not existing', async () => {
@@ -85,7 +85,7 @@ describe('InstituteAdminService', () => {
 
   describe('deleteDoctor', () => {
     const dto: DeleteDoctorDto = {
-      email: 'drsmith@example.com',
+      email: 'test@example.com',
     };
 
     it('should delete the doctor if found', async () => {
