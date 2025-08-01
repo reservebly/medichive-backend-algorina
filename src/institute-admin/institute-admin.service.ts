@@ -10,6 +10,7 @@ import { AddSymptomDto } from './dto/add-symptom.dto';
 import { AddDiagnosisDto } from './dto/add-diagnosis.dto';
 import { CreateLabReportDto } from './dto/add-lab-reports.dto';
 import { BlackblazeService } from 'src/blackbaze/blackbaze.service';
+import { AddPrescriptionDto } from './dto/add-prescriptions.dto';
 
 @Injectable()
 export class InstituteAdminService {
@@ -343,6 +344,40 @@ export class InstituteAdminService {
     return {
       message: 'Lab report added successfully',
       data: createdReport,
+    };
+  }
+
+  async addPrescription(data: AddPrescriptionDto, file) {
+    const { patientId, note, doctorId } = data;
+    const patient = await this.prisma.patient.findUnique({
+      where: { id: patientId },
+    });
+
+    if (!patient) {
+      throw new HttpException('Patient not found', HttpStatus.NOT_FOUND);
+    }
+
+      // Check if the doctor exists
+      const doctor = await this.prisma.doctor.findUnique({
+        where: { userId: doctorId },
+      });
+
+      if (!doctor) {
+        throw new HttpException('Doctor not found', HttpStatus.NOT_FOUND);
+      }
+    const imageUrl = await this.blackbazeService.uploadImage(file);
+    const createdPrescrip = await this.prisma.prescription.create({
+      data: {
+        patientId,
+        doctorId:doctor.id,
+        notes: note ?? null,
+        imageUrl,
+      },
+    });
+
+    return {
+      message: 'Prescription added successfully',
+      data: createdPrescrip,
     };
   }
 

@@ -21,6 +21,7 @@ import { AddSymptomDto } from './dto/add-symptom.dto';
 import { AddDiagnosisDto } from './dto/add-diagnosis.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateLabReportDto } from './dto/add-lab-reports.dto';
+import { AddPrescriptionDto } from './dto/add-prescriptions.dto';
 
 @Controller('institute-admin')
 @UseGuards(AuthRoleGuard)
@@ -73,9 +74,24 @@ export class InstituteAdminController {
   @Roles('INSTITUTE_ADMIN')
   @UseInterceptors(FileInterceptor('file'))
   @HttpCode(200)
-  async uploadLabReports(@Body() data: CreateLabReportDto, @UploadedFile() file) {
+  async uploadLabReports(
+    @Body() data: CreateLabReportDto,
+    @UploadedFile() file,
+  ) {
     File;
-    return await this.instituteAdminService.addLabReport(data,file);
+    return await this.instituteAdminService.addLabReport(data, file);
+  }
+
+  @Post('upload-prescription')
+  @Roles('INSTITUTE_ADMIN')
+  @UseInterceptors(FileInterceptor('file'))
+  @HttpCode(200)
+  async uploadPrescriptions(
+    @Body() data: AddPrescriptionDto,
+    @UploadedFile() file,
+  ) {
+    File;
+    return await this.instituteAdminService.addPrescription(data, file);
   }
 
   @Post('add-institute-admin')
@@ -93,8 +109,8 @@ export class InstituteAdminController {
   }
 
   @Get('image/:fileName')
-async getImageUrl(@Param('fileName') fileName: string) {
-  const url = await this.instituteAdminService.getSignedUrl(fileName);
-  return { url };
-}
+  async getImageUrl(@Param('fileName') fileName: string) {
+    const url = await this.instituteAdminService.getSignedUrl(fileName);
+    return { url };
+  }
 }
