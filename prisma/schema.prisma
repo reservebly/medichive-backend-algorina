@@ -53,7 +53,7 @@ model User {
 model Doctor {
   id            String              @id @default(uuid())
   experience    Float
-  licenseNumber String
+  licenseNumber String              @unique
   userId        String              @unique
   createdAt     DateTime            @default(now())
   updatedAt     DateTime            @default(now()) @updatedAt
