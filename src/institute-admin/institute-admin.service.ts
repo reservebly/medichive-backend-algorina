@@ -145,102 +145,6 @@ export class InstituteAdminService {
     }
   }
 
-  async addInstituteAdmin(data: AddInstituteAdminDto) {
-    try {
-      // Destructure required fields from the received data
-      const { email, name, contactNo, password, gender } = data;
-
-      const isExist = await this.prisma.user.findUnique({
-        where: { email },
-      });
-
-      if (isExist) {
-        throw new HttpException(
-          'Institute admin with this email already exists',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-
-      const hash = await bcrypt.hash(password, 12);
-
-      const institute = await this.prisma.institute.create({
-        data: {
-          name: 'ABC Institute',
-          registrationNumber: 'REG123',
-          contactNumber: '0112345678',
-          website: 'https://abc.com',
-          address: 'Colombo',
-          description: 'Best institute',
-          certificate: 'cert.pdf',
-        },
-      });
-
-      const user = await this.prisma.user.create({
-        data: {
-          email,
-          name,
-          contactNo,
-          gender,
-          roles: UserRole.INSTITUTE_ADMIN,
-          username: email,
-          password: hash,
-          instituteAdmin: {
-            create: {
-              instituteId: institute.id,
-            },
-          },
-        },
-      });
-
-      // Return a success message if creation is successful
-      return { message: 'Doctor created successfully' };
-    } catch (err) {
-      // Log error and handle gracefully
-      console.log(err);
-      this.handleErrors(err, 'Error creating doctor');
-    }
-  }
-
-  async addPatient(data: AddPatientDto) {
-    try {
-      const { email, name, contactNo, password, gender, address } = data;
-
-      const isExist = await this.prisma.user.findUnique({
-        where: { email },
-      });
-
-      if (isExist) {
-        throw new HttpException(
-          'Patient with this email already exists',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-
-      const hash = await bcrypt.hash(password, 12);
-
-      const user = await this.prisma.user.create({
-        data: {
-          email,
-          name,
-          contactNo,
-          address,
-          gender,
-          roles: UserRole.PATIENT,
-          username: email,
-          password: hash,
-          patient: {
-            create: {},
-          },
-        },
-      });
-
-      return { message: 'Patient created successfully' };
-    } catch (err) {
-      console.log(err);
-      this.handleErrors(err, 'Error creating patient');
-    }
-  }
-
   async addSymptom(data: AddSymptomDto) {
     try {
       const { symptoms, description, patientId, doctorId } = data;
@@ -357,19 +261,19 @@ export class InstituteAdminService {
       throw new HttpException('Patient not found', HttpStatus.NOT_FOUND);
     }
 
-      // Check if the doctor exists
-      const doctor = await this.prisma.doctor.findUnique({
-        where: { userId: doctorId },
-      });
+    // Check if the doctor exists
+    const doctor = await this.prisma.doctor.findUnique({
+      where: { userId: doctorId },
+    });
 
-      if (!doctor) {
-        throw new HttpException('Doctor not found', HttpStatus.NOT_FOUND);
-      }
+    if (!doctor) {
+      throw new HttpException('Doctor not found', HttpStatus.NOT_FOUND);
+    }
     const imageUrl = await this.blackbazeService.uploadImage(file);
     const createdPrescrip = await this.prisma.prescription.create({
       data: {
         patientId,
-        doctorId:doctor.id,
+        doctorId: doctor.id,
         notes: note ?? null,
         imageUrl,
       },
@@ -409,6 +313,102 @@ export class InstituteAdminService {
     } catch (err) {
       console.error(err);
       this.handleErrors(err, 'Error fetching patients');
+    }
+  }
+
+  async addInstituteAdmin(data: AddInstituteAdminDto) {
+    try {
+      // Destructure required fields from the received data
+      const { email, name, contactNo, password, gender } = data;
+
+      const isExist = await this.prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (isExist) {
+        throw new HttpException(
+          'Institute admin with this email already exists',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      const hash = await bcrypt.hash(password, 12);
+
+      const institute = await this.prisma.institute.create({
+        data: {
+          name: 'ABC Institute',
+          registrationNumber: 'REG123',
+          contactNumber: '0112345678',
+          website: 'https://abc.com',
+          address: 'Colombo',
+          description: 'Best institute',
+          certificate: 'cert.pdf',
+        },
+      });
+
+      const user = await this.prisma.user.create({
+        data: {
+          email,
+          name,
+          contactNo,
+          gender,
+          roles: UserRole.INSTITUTE_ADMIN,
+          username: email,
+          password: hash,
+          instituteAdmin: {
+            create: {
+              instituteId: institute.id,
+            },
+          },
+        },
+      });
+
+      // Return a success message if creation is successful
+      return { message: 'Doctor created successfully' };
+    } catch (err) {
+      // Log error and handle gracefully
+      console.log(err);
+      this.handleErrors(err, 'Error creating doctor');
+    }
+  }
+
+  async addPatient(data: AddPatientDto) {
+    try {
+      const { email, name, contactNo, password, gender, address } = data;
+
+      const isExist = await this.prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (isExist) {
+        throw new HttpException(
+          'Patient with this email already exists',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      const hash = await bcrypt.hash(password, 12);
+
+      const user = await this.prisma.user.create({
+        data: {
+          email,
+          name,
+          contactNo,
+          address,
+          gender,
+          roles: UserRole.PATIENT,
+          username: email,
+          password: hash,
+          patient: {
+            create: {},
+          },
+        },
+      });
+
+      return { message: 'Patient created successfully' };
+    } catch (err) {
+      console.log(err);
+      this.handleErrors(err, 'Error creating patient');
     }
   }
 
