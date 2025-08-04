@@ -1,4 +1,3 @@
-// src/blackblaze/blackblaze.service.ts
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
 import { v4 as uuid } from 'uuid';
@@ -12,7 +11,7 @@ export class BlackblazeService {
 
   constructor(    private configService: ConfigService,) {
     this.s3 = new AWS.S3({
-      endpoint: this.configService.get('B2_ENDPOINT'),//'https://s3.us-west-002.backblazeb2.com', Replace with your region
+      endpoint: this.configService.get('B2_ENDPOINT'),
       accessKeyId: this.configService.get('B2_KEY_ID'),
       secretAccessKey: this.configService.get('B2_APPLICATION_KEY'),
       region: 'us-east-005',
@@ -46,7 +45,7 @@ export class BlackblazeService {
     const params = {
       Bucket: this.bucketName,
       Key: fileName,
-      Expires: 60 * 60, // 1 hour
+      Expires: 60 * 60, 
     };
 
     return this.s3.getSignedUrlPromise('getObject', params);

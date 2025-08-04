@@ -14,10 +14,8 @@ import { AddPrescriptionDto } from './dto/add-prescriptions.dto';
 
 @Injectable()
 export class InstituteAdminService {
-  // Initialize a logger specific to this service
   private logger: Logger = new Logger(InstituteAdminService.name);
 
-  // Inject Prisma service for database operations
   constructor(
     private prisma: PrismaService,
     private blackbazeService: BlackblazeService,
@@ -31,7 +29,6 @@ export class InstituteAdminService {
 
   async addDoctors(data: AddDoctorDto) {
     try {
-      // Destructure required fields from the received data
       const {
         email,
         name,
@@ -67,9 +64,9 @@ export class InstituteAdminService {
           contactNo: phoneNumber,
           gender,
           dob,
-          roles: UserRole.DOCTOR, // Assign role as DOCTOR
+          roles: UserRole.DOCTOR, 
           username: email,
-          password: hash, // Store hashed password
+          password: hash, 
           doctor: {
             create: {
               experience,
