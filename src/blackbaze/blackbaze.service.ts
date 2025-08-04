@@ -22,7 +22,6 @@ export class BlackblazeService {
   }
 
   async uploadImage(file: { originalname: any; buffer: any; mimetype: any; }): Promise<string> {
-    console.log(this.bucketName);
     const fileKey = `${uuid()}-${file.originalname}`;
 
     const params: AWS.S3.PutObjectRequest = {
