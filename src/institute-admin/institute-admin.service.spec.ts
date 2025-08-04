@@ -399,7 +399,7 @@ describe('InstituteAdminService - addDoctors', () => {
 
   const mockFile = {
     originalname: 'test-image.jpg',
-    buffer: Buffer.from('fake file content'), // simulate file content as a Buffer
+    buffer: Buffer.from('fake file content'), 
     mimetype: 'image/jpeg',
     size: 1024,
   };
@@ -480,7 +480,7 @@ describe('InstituteAdminService - addDoctors', () => {
       where: { id: mockDto.patientId },
     });
 
-    // Should not call uploadImage or create if patient is missing
+ 
     expect(service['blackbazeService'].uploadImage).not.toHaveBeenCalled();
     expect(prisma.labReport.create).not.toHaveBeenCalled();
   });
